@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach to Odoo",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "justMyCode": false,
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/addons",
+                    "remoteRoot": "/mnt/extra-addons"
+                },
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/workspace"
+                },
+                {
+                    "localRoot": "/usr/lib/python3/dist-packages/odoo",
+                    "remoteRoot": "/usr/lib/python3/dist-packages/odoo"
+                }
+            ]
+        }
+    ]
+}

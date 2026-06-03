@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Sección "Quizás también te interese" en la ficha de producto.
+        Se inyecta después del bloque oe_structure_website_sale_product_2.
+        El JS en recommendations.js hace el fetch y rellena el grid.
+    -->
+    <template
+        id="product_similar_section"
+        name="Product Page - Similar Books"
+        inherit_id="website_sale.product"
+    >
+        <xpath
+            expr="//div[@id='oe_structure_website_sale_product_2']"
+            position="after"
+        >
+            <section
+                id="bookstore_similar_products"
+                class="container mt-5 mb-4"
+                t-att-data-product-id="product.id"
+            >
+                <h3 class="mb-4 fw-bold">Quizás también te interese</h3>
+                <div
+                    id="bookstore_similar_products_grid"
+                    class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3"
+                >
+                    <div class="col text-center text-muted py-4">
+                        <small>Cargando recomendaciones...</small>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
+    <!--
+        Sección "Otros usuarios también compraron" en el carrito.
+        Se inyecta después de la lista de productos del carrito.
+    -->
+    <template
+        id="cart_user_recs"
+        name="Cart - User Recommendations"
+        inherit_id="website_sale.cart"
+    >
+        <xpath
+            expr="//div[@id='oe_structure_website_sale_cart_1']"
+            position="after"
+        >
+            <t t-if="website_sale_order and website_sale_order.website_order_line">
+                <section
+                    id="bookstore_cart_user_recommendations"
+                    class="mt-5 mb-4"
+                    t-att-data-order-id="website_sale_order.id"
+                >
+                    <h3 class="mb-4 fw-bold">Otros usuarios también compraron</h3>
+                    <div
+                        id="bookstore_cart_user_recs_grid"
+                        class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3"
+                    >
+                        <div class="col text-center text-muted py-4">
+                            <small>Cargando recomendaciones...</small>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </xpath>
+    </template>
+
+    <!--
+        Sección "Otros usuarios también compraron" en la confirmación de pedido.
+        Se inyecta después del bloque oe_structure_website_sale_confirmation_2.
+        El contexto de la plantilla provee `order` (sale.order).
+    -->
+    <template
+        id="order_confirmation_user_recs"
+        name="Order Confirmation - User Recommendations"
+        inherit_id="website_sale.confirmation"
+    >
+        <xpath
+            expr="//div[@id='oe_structure_website_sale_confirmation_2']"
+            position="after"
+        >
+            <section
+                id="bookstore_user_recommendations"
+                class="mt-5 mb-4"
+                t-att-data-order-id="order.id"
+            >
+                <div class="container">
+                    <h3 class="mb-4 fw-bold">Otros usuarios también compraron</h3>
+                    <div
+                        id="bookstore_user_recs_grid"
+                        class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3"
+                    >
+                        <div class="col text-center text-muted py-4">
+                            <small>Cargando recomendaciones...</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+</odoo>

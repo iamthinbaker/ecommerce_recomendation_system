@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="recommendation_user_train_wizard_view_form" model="ir.ui.view">
+        <field name="name">recommendation.user.train.wizard.view.form</field>
+        <field name="model">recommendation.user.train.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Entrenar Modelo de Recomendación por Usuario">
+                <sheet>
+                    <group string="Filtros de Entrenamiento">
+                        <field name="months_lookback"
+                            widget="integer"
+                            string="Últimos N meses"
+                            help="Solo se usan pedidos de los últimos N meses. Escribe 0 para incluir todos." />
+                        <field name="min_orders"
+                            widget="integer"
+                            string="Pedidos mínimos por usuario"
+                            help="Excluye usuarios con menos de N pedidos confirmados en el periodo." />
+                        <field name="require_recurrence"
+                            string="Solo usuarios con recurrencia"
+                            help="Si está activo, solo se incluyen usuarios con 2 o más pedidos (equivale a Pedidos mínimos ≥ 2)." />
+                        <field name="effective_min_orders"
+                            readonly="1"
+                            string="Pedidos mínimos efectivos"
+                            help="Valor real que se aplicará al entrenar, teniendo en cuenta la recurrencia." />
+                    </group>
+                    <group string="Estado del Modelo">
+                        <field name="user_model_status" readonly="1"
+                            string="Modelo de Usuarios (Otros también compraron)" />
+                        <field name="last_trained" readonly="1" />
+                    </group>
+                    <p class="text-muted">
+                        Entrena el modelo colaborativo de usuarios con los pedidos confirmados.
+                        Genera sugerencias del tipo "Otros también compraron".
+                        Se necesitan al menos 5 usuarios distintos con datos tras aplicar los filtros.
+                    </p>
+                </sheet>
+                <footer>
+                    <button
+                        name="action_train_user_model"
+                        type="object"
+                        string="Entrenar Modelo de Usuarios"
+                        class="btn-primary"
+                    />
+                    <button
+                        string="Cerrar"
+                        class="btn-secondary"
+                        special="cancel"
+                    />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="recommendation_engine_user_train_wizard_action" model="ir.actions.act_window">
+        <field name="name">Entrenar Modelo de Usuarios</field>
+        <field name="res_model">recommendation.user.train.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="recommendation_user_train_wizard_view_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,0 +1,24 @@
+services:
+  web:
+    tty: true
+    ports:
+      - "5678:5678"
+    command: ["odoo --stop-after-init -i bookstore_recommendation && exec python3 -m debugpy --listen 0.0.0.0:5678 $(which odoo) --workers=0"]
+  populate:
+    build: .
+    user: root
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      - HOST=mydb
+      - USER=odoo
+      - PASSWORD=myodoo
+    volumes:
+      - ./scripts:/workspace/scripts
+      - ./data:/workspace/data
+    working_dir: /workspace/scripts
+    command: >
+      bash -c "python3 generate_synthetic_data.py &&
+               python3 populate_odoo.py"
+    restart: "no"

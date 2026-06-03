@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PGPASSWORD=myodoo psql -h 172.19.0.2 -U odoo -d admin -c \"SELECT count\\(*\\) FROM real_estate_property;\")",
+      "Bash(PGPASSWORD=myodoo psql -h 172.19.0.2 -U odoo -d admin -c \"SELECT count\\(*\\) FROM real_estate_property WHERE is_published=true AND active=true;\")",
+      "Bash(PGPASSWORD=myodoo psql -h 172.19.0.2 -U odoo -d admin -c \"SELECT login, password FROM res_users WHERE login='admin' LIMIT 1;\")"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_category_books" model="product.category">
+        <field name="name">Libros</field>
+    </record>
+
+    <record id="product_public_category_books" model="product.public.category">
+        <field name="name">Libros</field>
+    </record>
+</odoo>

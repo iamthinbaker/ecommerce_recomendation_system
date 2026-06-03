@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="book_genre_view_list" model="ir.ui.view">
+        <field name="name">book.genre.view.list</field>
+        <field name="model">book.genre</field>
+        <field name="arch" type="xml">
+            <list string="Géneros" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="parent_id" string="Género Padre"/>
+                <field name="product_count" string="Libros"/>
+                <field name="website_published"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="book_genre_view_form" model="ir.ui.view">
+        <field name="name">book.genre.view.form</field>
+        <field name="model">book.genre</field>
+        <field name="arch" type="xml">
+            <form string="Género">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="parent_id"/>
+                        <field name="sequence"/>
+                        <field name="website_published"/>
+                        <field name="product_count" readonly="1"/>
+                    </group>
+                    <group string="Subgéneros">
+                        <field name="child_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="product_count" readonly="1"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="description" colspan="2"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="book_genre_action" model="ir.actions.act_window">
+        <field name="name">Géneros</field>
+        <field name="res_model">book.genre</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

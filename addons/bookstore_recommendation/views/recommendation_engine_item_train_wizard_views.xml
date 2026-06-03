@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="recommendation_item_train_wizard_view_form" model="ir.ui.view">
+        <field name="name">recommendation.item.train.wizard.view.form</field>
+        <field name="model">recommendation.item.train.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Entrenar Modelo de Recomendación por Ítem">
+                <sheet>
+                    <group string="Filtros de Entrenamiento">
+                        <field name="months_lookback"
+                            widget="integer"
+                            string="Últimos N meses"
+                            help="Solo se usan pedidos de los últimos N meses. Escribe 0 para incluir todos." />
+                        <field name="min_product_orders"
+                            widget="integer"
+                            string="Apariciones mínimas por producto"
+                            help="Excluye productos que aparecen en menos de N pedidos confirmados." />
+                    </group>
+                    <group string="Estado del Modelo">
+                        <field name="item_model_status" readonly="1"
+                            string="Modelo de Ítems (Quizás también te interese)" />
+                        <field name="last_trained" readonly="1" />
+                    </group>
+                    <p class="text-muted">
+                        Entrena el modelo de similitud entre productos con los pedidos confirmados.
+                        Genera sugerencias del tipo "Quizás también te interese".
+                        Se necesitan al menos 2 productos distintos con datos.
+                    </p>
+                </sheet>
+                <footer>
+                    <button
+                        name="action_train_item_model"
+                        type="object"
+                        string="Entrenar Modelo de Ítems"
+                        class="btn-primary"
+                    />
+                    <button
+                        string="Cerrar"
+                        class="btn-secondary"
+                        special="cancel"
+                    />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="recommendation_engine_item_train_wizard_action" model="ir.actions.act_window">
+        <field name="name">Entrenar Modelo de Ítems</field>
+        <field name="res_model">recommendation.item.train.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="recommendation_item_train_wizard_view_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

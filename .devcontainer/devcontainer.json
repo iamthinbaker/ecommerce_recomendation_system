@@ -1,0 +1,81 @@
+{
+  "name": "Inmobiliaria ThinBaker - Odoo 19",
+  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
+  "service": "web",
+  "workspaceFolder": "/workspace",
+
+  "remoteUser": "root",
+
+  "containerEnv": {
+    "PYTHONPATH": "/mnt/extra-addons"
+  },
+
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude,target=/root/.claude,type=bind,consistency=cached"
+  ],
+
+  "forwardPorts": [8069, 5678],
+  "portsAttributes": {
+    "8069": {
+      "label": "Odoo",
+      "onAutoForward": "openBrowser"
+    },
+    "5678": {
+      "label": "Odoo Debugger",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Python
+        "ms-python.python",
+        "ms-python.pylance",
+        "ms-python.debugpy",
+        "ms-python.black-formatter",
+        "njpwerner.autodocstring",
+
+        // XML / Odoo
+        "redhat.vscode-xml",
+        "mechatroner.rainbow-csv",
+
+        // Claude
+        "anthropic.claude-code",
+
+        // Con
+        "ms-azuretools.vscode-docker",
+        "ms-azuretools.vscode-containers",
+
+        // TOML
+        "tamasfe.even-better-toml",
+
+        // General DX
+        //"eamodio.gitlens",
+        //"usernamehw.errorlens"
+        //"streetsidesoftware.code-spell-checker",
+        //"streetsidesoftware.code-spell-checker-spanish"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "python.analysis.extraPaths": [
+          "/usr/lib/python3/dist-packages",
+          "/mnt/extra-addons"
+        ],
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "[xml]": {
+          "editor.defaultFormatter": "redhat.vscode-xml"
+        },
+        "files.associations": {
+          "*.xml": "xml"
+        },
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}

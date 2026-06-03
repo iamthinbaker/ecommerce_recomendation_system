@@ -1,0 +1,34 @@
+{
+    'name': 'Bookstore Recommendation System',
+    'version': '19.0.1.0.0',
+    'category': 'Website/eCommerce',
+    'summary': 'Librería online con recomendaciones colaborativas en Odoo 19',
+    'author': 'ThinBaker',
+    'depends': [
+        'website_sale',
+        'sale',
+        'stock',
+        'crm',
+        'product',
+        'website',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/book_product_category.xml',
+        'views/book_genre_views.xml',
+        'views/product_book_views.xml',
+        'views/recommendation_engine_item_train_wizard_views.xml',
+        'views/recommendation_engine_user_train_wizard_views.xml',
+        'views/bookstore_menus.xml',
+        'views/website_sale_templates.xml',
+        'views/bookstore_home_template.xml',
+    ],
+    'assets': {
+        'web.assets_frontend': [
+            'bookstore_recommendation/static/src/js/recommendations.js',
+        ],
+    },
+    'installable': True,
+    'application': True,
+    'license': 'LGPL-3',
+}

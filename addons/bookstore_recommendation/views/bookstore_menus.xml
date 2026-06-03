@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_recomendation_engine_root"
+        name="Recomendation Engine"
+        parent="website.menu_website_configuration"
+        sequence="50"
+    />
+
+    <menuitem
+        id="menu_recomendation_engine_productcard"
+        name="ProductCard Recomendation Engine"
+        parent="menu_recomendation_engine_root"
+        action="recommendation_engine_item_train_wizard_action"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_recomendation_engine_confirmorder"
+        name="ConfirmOrder Recomendation Engine"
+        parent="menu_recomendation_engine_root"
+        action="recommendation_engine_user_train_wizard_action"
+        sequence="20"
+    />
+</odoo>
