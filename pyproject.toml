@@ -21,6 +21,7 @@ dev = [
 # Dependencias adicionales para los scripts de generación y población de datos
 scripts = [
     "faker[es_ES]",
+    "psycopg2-binary",
 ]
 
 [tool.ruff]

@@ -9,6 +9,7 @@
                 <field name="book_author" string="Autor"/>
                 <field name="book_isbn" string="ISBN"/>
                 <field name="book_genre_id" string="Género"/>
+                <field name="book_promoted" string="Promoción"/>
                 <field name="list_price" string="Precio"/>
                 <field name="website_published"/>
             </list>
@@ -32,6 +33,7 @@
                             <field name="book_pages"/>
                             <field name="book_publisher"/>
                             <field name="book_year"/>
+                            <field name="book_promoted"/>
                         </group>
                     </group>
                 </page>

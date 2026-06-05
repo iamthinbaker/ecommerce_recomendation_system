@@ -1,0 +1,317 @@
+/* =========================================================
+   Bookstore Theme — inspired by Casa del Libro aesthetic
+   ========================================================= */
+
+:root {
+    --cdl-olive:      #8B6914;   /* logo / brand olive-gold */
+    --cdl-magenta:    #D81B7E;   /* primary CTA, "Ofertas" */
+    --cdl-magenta-dk: #b5156a;   /* hover state */
+    --cdl-red:        #C62828;   /* prices, discount badges */
+    --cdl-green:      #2E7D32;   /* free-shipping badge */
+    --cdl-text:       #333333;
+    --cdl-muted:      #757575;
+    --cdl-light-bg:   #F7F7F7;
+    --cdl-border:     #E0E0E0;
+    --cdl-white:      #FFFFFF;
+}
+
+/* ── Body / global ────────────────────────────────────────── */
+body {
+    background-color: var(--cdl-white);
+    color: var(--cdl-text);
+    font-family: 'Open Sans', Arial, sans-serif;
+}
+
+/* ── Hero / search bar ───────────────────────────────────── */
+.bookstore-hero {
+    background: var(--cdl-white) !important;
+    border-bottom: 1px solid var(--cdl-border);
+}
+.bookstore-hero h1 {
+    color: var(--cdl-olive);
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+}
+.bookstore-hero .lead {
+    color: var(--cdl-muted);
+}
+.bookstore-hero .form-control {
+    border: 1px solid var(--cdl-border) !important;
+    border-right: none !important;
+    border-radius: 4px 0 0 4px !important;
+    font-size: 0.95rem;
+    color: var(--cdl-text);
+}
+.bookstore-hero .form-control:focus {
+    box-shadow: none;
+    border-color: var(--cdl-olive) !important;
+}
+.bookstore-hero .btn-search {
+    background-color: var(--cdl-white);
+    border: 1px solid var(--cdl-border);
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    color: var(--cdl-muted);
+    padding: 0 1rem;
+    transition: background 0.15s;
+}
+.bookstore-hero .btn-search:hover {
+    background-color: var(--cdl-light-bg);
+    color: var(--cdl-olive);
+}
+
+/* ── Genre navigation bar ────────────────────────────────── */
+.bookstore-genre-nav {
+    background: var(--cdl-white) !important;
+    border-bottom: 1px solid var(--cdl-border);
+}
+.bookstore-genre-nav .nav-link {
+    color: var(--cdl-text) !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 0;
+    white-space: nowrap;
+    transition: color 0.15s;
+}
+.bookstore-genre-nav .nav-link:hover {
+    color: var(--cdl-magenta) !important;
+    background: transparent !important;
+}
+.bookstore-genre-nav .nav-link.ofertas {
+    color: var(--cdl-magenta) !important;
+}
+.bookstore-genre-nav .nav-link.active {
+    color: var(--cdl-magenta) !important;
+    background: transparent !important;
+}
+
+/* ── Section headers ─────────────────────────────────────── */
+.bookstore-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--cdl-text);
+    border-bottom: 2px solid var(--cdl-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+.bookstore-section-link {
+    font-size: 0.82rem;
+    color: var(--cdl-muted);
+    text-decoration: none;
+}
+.bookstore-section-link:hover {
+    color: var(--cdl-magenta);
+    text-decoration: underline;
+}
+
+/* ── Sub-genre pills ─────────────────────────────────────── */
+.bookstore-subgenre-pill {
+    font-size: 0.78rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    border: 1px solid var(--cdl-border);
+    color: var(--cdl-text);
+    background: var(--cdl-white);
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+}
+.bookstore-subgenre-pill:hover {
+    background: var(--cdl-light-bg);
+    border-color: var(--cdl-muted);
+    color: var(--cdl-text);
+}
+.bookstore-subgenre-pill .badge {
+    background: var(--cdl-light-bg) !important;
+    color: var(--cdl-muted);
+}
+
+/* ── Book card ───────────────────────────────────────────── */
+.bookstore-book-card {
+    border: 1px solid var(--cdl-border) !important;
+    border-radius: 4px !important;
+    background: var(--cdl-white);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    overflow: hidden;
+}
+.bookstore-book-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10) !important;
+}
+
+/* cover image container */
+.bookstore-book-cover {
+    height: 195px;
+    overflow: hidden;
+    background: var(--cdl-light-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bookstore-book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* book card body */
+.bookstore-book-body {
+    padding: 0.5rem 0.6rem 0.65rem;
+}
+.bookstore-book-binding {
+    font-size: 0.7rem;
+    color: var(--cdl-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.2rem;
+}
+.bookstore-book-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--cdl-text);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 0.15rem;
+}
+.bookstore-book-author {
+    font-size: 0.75rem;
+    color: var(--cdl-muted);
+    margin-bottom: 0.35rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* price block */
+.bookstore-price-row {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+.bookstore-price-original {
+    font-size: 0.75rem;
+    color: var(--cdl-muted);
+    text-decoration: line-through;
+}
+.bookstore-discount-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: var(--cdl-red);
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+.bookstore-price-final {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--cdl-red);
+}
+.bookstore-price-only {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--cdl-text);
+}
+
+/* free shipping badge */
+.bookstore-free-shipping {
+    font-size: 0.68rem;
+    color: var(--cdl-green);
+    font-weight: 600;
+    margin-top: 0.2rem;
+}
+
+/* add-to-cart button */
+.bookstore-btn-add {
+    background-color: var(--cdl-magenta);
+    border: none;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    width: 100%;
+    margin-top: 0.4rem;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: background-color 0.15s;
+}
+.bookstore-btn-add:hover {
+    background-color: var(--cdl-magenta-dk);
+    color: #fff;
+}
+.bookstore-btn-view {
+    background: var(--cdl-white);
+    border: 1px solid var(--cdl-border);
+    color: var(--cdl-text);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    width: 100%;
+    margin-top: 0.25rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+.bookstore-btn-view:hover {
+    border-color: var(--cdl-magenta);
+    color: var(--cdl-magenta);
+}
+
+/* ── Alternating section backgrounds ────────────────────── */
+.bookstore-sections > section:nth-child(even) {
+    background-color: var(--cdl-light-bg);
+}
+.bookstore-sections > section:nth-child(odd) {
+    background-color: var(--cdl-white);
+}
+
+/* ── Website sale overrides ──────────────────────────────── */
+/* "Añadir al carrito" button on product / shop pages */
+#add_to_cart,
+.o_wsale_product_btn .btn-primary,
+.a-submit.btn-primary {
+    background-color: var(--cdl-magenta) !important;
+    border-color: var(--cdl-magenta) !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px;
+}
+#add_to_cart:hover,
+.o_wsale_product_btn .btn-primary:hover,
+.a-submit.btn-primary:hover {
+    background-color: var(--cdl-magenta-dk) !important;
+    border-color: var(--cdl-magenta-dk) !important;
+}
+
+/* Price on product page */
+.oe_price .oe_currency_value,
+#product_price .oe_price {
+    color: var(--cdl-red) !important;
+    font-weight: 700;
+}
+
+/* Cart header */
+.o_website_sale_main_header {
+    border-bottom: 1px solid var(--cdl-border);
+}
+
+/* "Otros usuarios también compraron" / "Quizás también te interese" */
+#bookstore_similar_products h3,
+#bookstore_cart_user_recommendations h3,
+#bookstore_user_recommendations h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--cdl-text);
+    border-bottom: 2px solid var(--cdl-border);
+    padding-bottom: 0.5rem;
+}
+
+/* ── Responsive tweaks ───────────────────────────────────── */
+@media (max-width: 576px) {
+    .bookstore-hero h1 { font-size: 1.5rem; }
+    .bookstore-book-cover { height: 160px; }
+}

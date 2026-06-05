@@ -1,3 +1,5 @@
+/** @odoo-module */
+
 function buildProductCard(p) {
     return `
         <div class="col">

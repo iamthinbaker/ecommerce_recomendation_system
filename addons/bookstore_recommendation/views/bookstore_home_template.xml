@@ -4,102 +4,111 @@
     <t t-call="website.layout">
         <t t-set="pageName" t-value="'bookstore_home'"/>
 
-        <!-- Hero con buscador omnisearch -->
-        <section class="bookstore-hero text-white py-5"
-                 style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
-            <div class="container text-center py-3">
-                <h1 class="display-4 fw-bold mb-2">Librería</h1>
-                <p class="lead text-white-50 mb-4">Descubre tu próxima lectura</p>
-                <form action="/shop" method="get" class="d-flex justify-content-center">
-                    <div class="input-group input-group-lg" style="max-width:640px;">
+        <!-- Hero: search bar, light/white — estilo Casa del Libro -->
+        <section class="bookstore-hero py-3">
+            <div class="container">
+                <div class="d-flex align-items-center justify-content-center">
+                    <form action="/shop" method="get"
+                          class="d-flex w-100" style="max-width:660px;">
                         <input
                             type="text"
                             name="search"
-                            class="form-control border-0 shadow-sm"
-                            placeholder="Buscar por título, autor, género..."
+                            class="form-control border-end-0"
+                            style="border-radius:4px 0 0 4px;"
+                            placeholder="Busca por autor, título, género, ISBN..."
                             t-att-value="search_value"
                             autocomplete="off"
                         />
-                        <button type="submit" class="btn btn-warning fw-bold px-4">
-                            <i class="fa fa-search me-1"/>Buscar
+                        <button type="submit" class="bookstore-btn-search"
+                                style="background:#fff;border:1px solid #e0e0e0;
+                                       border-left:none;border-radius:0 4px 4px 0;
+                                       padding:0 1rem;color:#757575;cursor:pointer;">
+                            <i class="fa fa-search"/>
                         </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </section>
 
-        <!-- Barra de navegación de géneros (como la imagen de referencia) -->
-        <nav class="bookstore-genre-nav sticky-top shadow-sm"
-             style="background:#1a1a2e; z-index:100;">
+        <!-- Barra de géneros — fondo blanco, texto oscuro, estilo Casa del Libro -->
+        <nav class="bookstore-genre-nav sticky-top" style="z-index:100;">
             <div class="container">
-                <ul class="nav nav-pills py-2 flex-nowrap overflow-auto" style="gap:4px;">
+                <ul class="nav py-1 flex-nowrap overflow-auto" style="gap:0;">
                     <li class="nav-item">
-                        <a class="nav-link text-white-50 px-3 py-1"
-                           href="/shop">
-                            <small>Ver todo</small>
+                        <a class="nav-link" href="/shop">
+                            Ver todo
                         </a>
                     </li>
                     <t t-foreach="top_genres" t-as="genre">
                         <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-1 fw-semibold"
-                               t-attf-href="#genre-#{genre.id}"
-                               style="font-size:0.9rem;">
+                            <a class="nav-link"
+                               t-attf-href="#genre-#{genre.id}">
                                 <t t-out="genre.name"/>
                             </a>
                         </li>
                     </t>
+                    <li class="nav-item ms-auto">
+                        <a class="nav-link ofertas" href="/shop?tag=ofertas">
+                            Ofertas
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
 
-        <!-- Secciones jerárquicas de géneros -->
-        <div class="bookstore-sections py-4">
+        <!-- Secciones de géneros -->
+        <div class="bookstore-sections">
             <t t-foreach="genre_sections" t-as="section">
                 <t t-set="genre" t-value="section['genre']"/>
                 <t t-set="books" t-value="section['books']"/>
 
-                <section t-attf-id="genre-#{genre.id}" class="py-5 border-bottom">
+                <section t-attf-id="genre-#{genre.id}" class="py-4 border-bottom">
                     <div class="container">
 
-                        <!-- Cabecera de la sección con nombre del género padre -->
-                        <div class="d-flex align-items-baseline justify-content-between mb-3">
-                            <h2 class="fw-bold mb-0" style="font-size:1.5rem;">
+                        <!-- Cabecera de sección -->
+                        <div class="d-flex align-items-baseline
+                                    justify-content-between mb-3">
+                            <h2 class="bookstore-section-title mb-0 border-0 pb-0">
                                 <t t-out="genre.name"/>
                             </h2>
                             <t t-if="genre.public_categ_id">
                                 <a t-attf-href="/shop?category=#{genre.public_categ_id.id}"
-                                   class="text-muted small">
+                                   class="bookstore-section-link">
                                     Ver todos →
                                 </a>
                             </t>
                             <t t-else="">
                                 <a t-attf-href="/shop?search=#{genre.name}"
-                                   class="text-muted small">
+                                   class="bookstore-section-link">
                                     Ver todos →
                                 </a>
                             </t>
                         </div>
 
-                        <!-- Subgéneros como pills (estilo imagen de referencia) -->
+                        <!-- Subgéneros como pills -->
                         <t t-if="genre.child_ids">
-                            <div class="d-flex flex-wrap gap-2 mb-4">
+                            <div class="d-flex flex-wrap gap-2 mb-3">
                                 <t t-foreach="genre.child_ids" t-as="child">
                                     <t t-if="child.public_categ_id">
                                         <a t-attf-href="/shop?category=#{child.public_categ_id.id}"
-                                           class="btn btn-sm btn-outline-secondary rounded-pill">
+                                           class="bookstore-subgenre-pill">
                                             <t t-out="child.name"/>
-                                            <span class="badge bg-secondary ms-1 rounded-pill"
-                                                  style="font-size:0.65rem;">
+                                            <span class="badge rounded-pill ms-1"
+                                                  style="background:#f0f0f0;
+                                                         color:#757575;
+                                                         font-size:0.65rem;">
                                                 <t t-out="child.product_count"/>
                                             </span>
                                         </a>
                                     </t>
                                     <t t-else="">
                                         <a t-attf-href="/shop?search=#{child.name}"
-                                           class="btn btn-sm btn-outline-secondary rounded-pill">
+                                           class="bookstore-subgenre-pill">
                                             <t t-out="child.name"/>
-                                            <span class="badge bg-secondary ms-1 rounded-pill"
-                                                  style="font-size:0.65rem;">
+                                            <span class="badge rounded-pill ms-1"
+                                                  style="background:#f0f0f0;
+                                                         color:#757575;
+                                                         font-size:0.65rem;">
                                                 <t t-out="child.product_count"/>
                                             </span>
                                         </a>
@@ -108,49 +117,76 @@
                             </div>
                         </t>
 
-                        <!-- Libros destacados de la sección -->
+                        <!-- Grid de libros -->
                         <t t-if="books">
                             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
                                 <t t-foreach="books" t-as="book">
                                     <div class="col">
-                                        <a t-att-href="book.website_url"
-                                           class="text-decoration-none text-dark">
-                                            <div class="card h-100 border-0 shadow-sm
-                                                        bookstore-book-card">
-                                                <div style="height:200px;overflow:hidden;
-                                                            background:#f8f9fa;">
+                                        <div class="card bookstore-book-card h-100 border-0">
+
+                                            <!-- Portada -->
+                                            <a t-att-href="book.website_url"
+                                               class="text-decoration-none">
+                                                <div class="bookstore-book-cover">
                                                     <img
                                                         t-attf-src="/web/image/product.template/#{book.id}/image_256"
-                                                        class="card-img-top w-100 h-100"
-                                                        style="object-fit:cover;"
                                                         t-att-alt="book.name"
                                                         loading="lazy"
                                                     />
                                                 </div>
-                                                <div class="card-body p-2">
-                                                    <p class="card-title small fw-bold mb-1 lh-sm"
-                                                       style="display:-webkit-box;
-                                                              -webkit-line-clamp:2;
-                                                              -webkit-box-orient:vertical;
-                                                              overflow:hidden;">
-                                                        <t t-out="book.name"/>
-                                                    </p>
-                                                    <p class="card-text small text-muted mb-1">
-                                                        <t t-out="book.book_author or ''"/>
-                                                    </p>
-                                                    <p class="card-text small fw-bold"
-                                                       style="color:#e67e22;">
-                                                        <t t-esc="'%.2f' % book.list_price"/> €
-                                                    </p>
+                                            </a>
+
+                                            <!-- Datos del libro -->
+                                            <div class="bookstore-book-body d-flex
+                                                        flex-column flex-grow-1">
+                                                <div class="bookstore-book-binding">
+                                                    Tapa blanda
                                                 </div>
+                                                <a t-att-href="book.website_url"
+                                                   class="text-decoration-none flex-grow-1">
+                                                    <div class="bookstore-book-title">
+                                                        <t t-out="book.name"/>
+                                                    </div>
+                                                    <div class="bookstore-book-author">
+                                                        <t t-out="book.book_author or ''"/>
+                                                    </div>
+                                                </a>
+
+                                                <!-- Precio: original tachado + descuento + final -->
+                                                <div>
+                                                    <div class="bookstore-price-row">
+                                                        <span class="bookstore-price-original">
+                                                            <t t-esc="'%.2f' % book.list_price"/> €
+                                                        </span>
+                                                        <span class="bookstore-discount-badge">
+                                                            -5%
+                                                        </span>
+                                                    </div>
+                                                    <div class="bookstore-price-final">
+                                                        <t t-esc="'%.2f' % (book.list_price * 0.95)"/> €
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botones -->
+                                                <a t-att-href="book.website_url"
+                                                   class="bookstore-btn-view mt-2
+                                                          text-center text-decoration-none">
+                                                    VER FICHA
+                                                </a>
+                                                <a t-attf-href="/shop/cart/update?product_id=#{book.id}&amp;add_qty=1"
+                                                   class="bookstore-btn-add
+                                                          text-center text-decoration-none">
+                                                    AÑADIR
+                                                </a>
                                             </div>
-                                        </a>
+
+                                        </div>
                                     </div>
                                 </t>
                             </div>
                         </t>
                         <t t-else="">
-                            <p class="text-muted">
+                            <p class="text-muted small">
                                 No hay libros disponibles en esta categoría.
                             </p>
                         </t>
@@ -159,19 +195,6 @@
                 </section>
             </t>
         </div>
-
-        <style>
-            .bookstore-book-card {
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-            }
-            .bookstore-book-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
-            }
-            .bookstore-genre-nav .nav-link:hover {
-                color: #f39c12 !important;
-            }
-        </style>
 
     </t>
 </template>

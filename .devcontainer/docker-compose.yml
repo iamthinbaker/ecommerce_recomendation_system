@@ -19,6 +19,5 @@ services:
       - ./data:/workspace/data
     working_dir: /workspace/scripts
     command: >
-      bash -c "python3 generate_synthetic_data.py &&
-               python3 populate_odoo.py"
+      bash -c "python3 populate_pg.py"
     restart: "no"

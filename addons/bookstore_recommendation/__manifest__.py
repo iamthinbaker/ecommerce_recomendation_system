@@ -25,6 +25,7 @@
     ],
     'assets': {
         'web.assets_frontend': [
+            'bookstore_recommendation/static/src/css/bookstore_theme.css',
             'bookstore_recommendation/static/src/js/recommendations.js',
         ],
     },

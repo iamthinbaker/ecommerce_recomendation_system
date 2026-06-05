@@ -1,6 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!--
+        Atributos del libro en la ficha de producto.
+        Se inyecta dentro del bloque de detalle del producto, tras el precio.
+    -->
+    <template
+        id="product_book_attributes"
+        name="Product Page - Book Attributes"
+        inherit_id="website_sale.product"
+    >
+        <xpath
+            expr="//div[hasclass('o_wsale_product_details_content_section_cta')]"
+            position="after"
+        >
+            <t t-if="product.book_author or product.book_publisher or product.book_pages or product.book_genre_id or product.book_isbn">
+                <div class="mt-3 mb-3">
+                    <table class="table table-sm table-borderless book-attributes-table"
+                        style="max-width: 480px;">
+                        <tbody>
+                            <t t-if="product.book_author">
+                                <tr>
+                                    <th class="text-muted fw-normal ps-0" style="width:40%;">Autor</th>
+                                    <td class="fw-semibold">
+                                        <t t-esc="product.book_author" />
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="product.book_publisher">
+                                <tr>
+                                    <th class="text-muted fw-normal ps-0">Editorial</th>
+                                    <td class="fw-semibold">
+                                        <t t-esc="product.book_publisher" />
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="product.book_year">
+                                <tr>
+                                    <th class="text-muted fw-normal ps-0">Año de publicación</th>
+                                    <td class="fw-semibold">
+                                        <t t-esc="product.book_year" />
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="product.book_pages">
+                                <tr>
+                                    <th class="text-muted fw-normal ps-0">Páginas</th>
+                                    <td class="fw-semibold">
+                                        <t t-esc="product.book_pages" />
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="product.book_genre_id">
+                                <tr>
+                                    <th class="text-muted fw-normal ps-0">Género</th>
+                                    <td class="fw-semibold">
+                                        <t t-esc="product.book_genre_id.name" />
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="product.book_sub_genre_id">
+                                <tr>
+                                    <th class="text-muted fw-normal ps-0">Subgénero</th>
+                                    <td class="fw-semibold">
+                                        <t t-esc="product.book_sub_genre_id.name" />
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="product.book_isbn">
+                                <tr>
+                                    <th class="text-muted fw-normal ps-0">ISBN</th>
+                                    <td class="fw-semibold">
+                                        <t t-esc="product.book_isbn" />
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <!--
         Sección "Quizás también te interese" en la ficha de producto.
         Se inyecta después del bloque oe_structure_website_sale_product_2.
         El JS en recommendations.js hace el fetch y rellena el grid.

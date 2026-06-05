@@ -85,9 +85,8 @@ class BookstoreRecommendationController(http.Controller):
         if not order.exists():
             return []
 
-        partner_id = order.partner_id.id
         engine = request.env["recommendation.engine.user"].sudo()
-        products = engine.get_user_recommendations(partner_id, limit=3)
+        products = engine.get_user_recommendations(order_id, limit=3)
         return [
             {
                 "id": p.id,
