@@ -12,11 +12,23 @@ services:
       - USER=odoo
       - PASSWORD=myodoo
     volumes:
+      - .:/workspace
       - ./addons:/mnt/extra-addons
       - ./odoo.conf:/etc/odoo/odoo.conf
       - odoo-filestore:/var/lib/odoo
     entrypoint: ["/bin/bash", "-c"]
-    command: ["odoo --stop-after-init -i bookstore_recommendation && exec python3 -m debugpy --listen 0.0.0.0:5678 $(which odoo) --workers=0"]
+    command: [
+      "odoo --stop-after-init -i bookstore_recommendation &&
+       python3 -m debugpy --listen 0.0.0.0:5678 $(which odoo) --workers=0 &
+       echo 'Waiting for Odoo health...' &&
+       until curl -sf http://localhost:8069/web/health; do sleep 5; done &&
+       echo 'Odoo healthy, waiting for XML-RPC auth...' &&
+       until python3 -c \"import xmlrpc.client; s=xmlrpc.client.ServerProxy('http://localhost:8069/xmlrpc/2/common'); uid=s.authenticate('mydb','admin','admin',{}); exit(0 if uid else 1)\" 2>/dev/null; do sleep 5; done &&
+       echo 'Odoo ready, running populate...' &&
+       python3 /workspace/scripts/populate_pg.py &&
+       echo 'Populate complete!' &&
+       wait"
+    ]
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:8069/web/health"]
       interval: 10s

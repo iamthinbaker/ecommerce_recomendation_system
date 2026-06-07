@@ -19,7 +19,7 @@ import psycopg2.extras
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 PG_DSN = "host=mydb dbname=mydb user=odoo password=myodoo"
-URL = "http://web:8069"
+URL = "http://localhost:8069"
 DB = "mydb"
 PASSWORD = "admin"
 
@@ -203,8 +203,12 @@ cur = conn.cursor()
 cur.execute("SELECT id FROM res_company ORDER BY id LIMIT 1")
 company_id = cur.fetchone()[0]
 
-cur.execute("SELECT uom_id FROM product_template WHERE uom_id IS NOT NULL LIMIT 1")
-uom_id = cur.fetchone()[0]
+cur.execute("SELECT id FROM uom_uom WHERE name::jsonb->>'en_US' = 'Units' AND active = true LIMIT 1")
+row = cur.fetchone()
+if row is None:
+    cur.execute("SELECT id FROM uom_uom WHERE active = true ORDER BY id LIMIT 1")
+    row = cur.fetchone()
+uom_id = row[0]
 
 cur.execute(
     "SELECT id, currency_id FROM product_pricelist WHERE active = true ORDER BY id LIMIT 1"
@@ -340,6 +344,7 @@ psycopg2.extras.execute_values(
        VALUES %s RETURNING id""",
     books_to_insert,
     template="(%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,'no','none',1.0,%s,%s,%s,NOW(),NOW())",
+    page_size=len(books_to_insert),
 )
 new_tmpl_ids = [r[0] for r in cur.fetchall()]
 
@@ -418,6 +423,7 @@ psycopg2.extras.execute_values(
        VALUES %s RETURNING id""",
     customers_to_insert,
     template="(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'ask',%s,%s,NOW(),NOW())",
+    page_size=len(customers_to_insert),
 )
 customer_partner_ids = dict(zip(customer_csv_ids, (r[0] for r in cur.fetchall())))
 conn.commit()

@@ -110,10 +110,6 @@ class ItemRecommendationEngine(models.AbstractModel):
         if similarity_df is None or product_tmpl_id not in similarity_df.index:
             return self.env["product.template"]
 
-        source_sub_genre_id = (
-            self.env["product.template"].browse(product_tmpl_id).book_sub_genre_id.id
-        )
-
         scores = (
             (
                 # Get similarity scores for the given product template, excluding itself
@@ -122,24 +118,16 @@ class ItemRecommendationEngine(models.AbstractModel):
                 .nlargest(limit * 3)
                 .to_frame("similarity")
                 # Add product template records to apply additional filters and boosts
-                .assign(
-                    product_card=lambda df: self.env["product.template"].browse(
-                        df.index.tolist()
-                    )
-                )
-                # Boost similarity for products in the same sub-genre and promoted books
-                .assign(
-                    similarity=lambda df: df.similarity
-                    + df.product_card.apply(lambda p: p.book_sub_genre_id.id).eq(
-                        source_sub_genre_id
-                    )
-                    * 0.2
-                )
-                # Boost similarity for promoted books
-                .assign(
-                    similarity=lambda df: df.similarity
-                    + df.product_card.apply(lambda p: p.book_promoted) * 0.3
-                )
+                # .assign(
+                #     product_card=lambda df: self.env["product.template"].browse(
+                #         df.index.tolist()
+                #     )
+                # )
+                # # Boost similarity for promoted books
+                # .assign(
+                #     similarity=lambda df: df.similarity
+                #     + df.product_card.apply(lambda p: p.book_promoted) * 0.3
+                # )
             )
             .sort_values(
                 "similarity",
