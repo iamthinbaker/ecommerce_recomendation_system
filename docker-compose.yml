@@ -15,7 +15,6 @@ services:
       - .:/workspace
       - ./addons:/mnt/extra-addons
       - ./odoo.conf:/etc/odoo/odoo.conf
-      - odoo-filestore:/var/lib/odoo
     entrypoint: ["/bin/bash", "-c"]
     command: [
       "odoo --stop-after-init -i bookstore_recommendation &&
@@ -48,6 +47,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
-volumes:
-  odoo-filestore:
