@@ -6,11 +6,22 @@
         <field name="arch" type="xml">
             <form string="Entrenar Modelo de Recomendación por Ítem">
                 <sheet>
+                    <p class="text-muted">
+                        Selecciona los atributos que el modelo tendrá en cuenta para calcular la
+                        similitud entre productos.
+                    </p>
+                    <group string="Atributos del Producto">
+                        <field name="use_parent_genre" widget="boolean" string="Género principal" />
+                        <field name="use_genre" widget="boolean" string="Género" />
+                        <field name="use_sub_genre" widget="boolean" string="Subgénero" />
+                        <field name="use_author" widget="boolean" string="Autor" />
+                        <field name="use_publisher" widget="boolean" string="Editorial" />
+                        <field name="use_description" widget="boolean" string="Descripción" />
+                        <field name="use_year" widget="boolean" string="Año de publicación" />
+                        <field name="use_pages" widget="boolean" string="Número de páginas" />
+                        <field name="use_price" widget="boolean" string="Precio" />
+                    </group>
                     <group string="Filtros de Entrenamiento">
-                        <field name="months_lookback"
-                            widget="integer"
-                            string="Últimos N meses"
-                            help="Solo se usan pedidos de los últimos N meses. Escribe 0 para incluir todos." />
                         <field name="min_product_orders"
                             widget="integer"
                             string="Apariciones mínimas por producto"
@@ -48,7 +59,7 @@
         <field name="name">Entrenar Modelo de Ítems</field>
         <field name="res_model">recommendation.item.train.wizard</field>
         <field name="view_mode">form</field>
-        <field name="view_id" ref="recommendation_item_train_wizard_view_form"/>
+        <field name="view_id" ref="recommendation_item_train_wizard_view_form" />
         <field name="target">new</field>
     </record>
 </odoo>

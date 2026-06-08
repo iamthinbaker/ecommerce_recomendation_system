@@ -24,7 +24,7 @@ services:
        echo 'Odoo healthy, waiting for XML-RPC auth...' &&
        until python3 -c \"import xmlrpc.client; s=xmlrpc.client.ServerProxy('http://localhost:8069/xmlrpc/2/common'); uid=s.authenticate('mydb','admin','admin',{}); exit(0 if uid else 1)\" 2>/dev/null; do sleep 5; done &&
        echo 'Odoo ready, running populate...' &&
-       python3 /workspace/scripts/populate_pg.py &&
+       python3 /workspace/scripts/populate_odoo.py &&
        echo 'Populate complete!' &&
        wait"
     ]
@@ -47,3 +47,4 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+

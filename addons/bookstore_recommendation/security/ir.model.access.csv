@@ -3,4 +3,4 @@ access_book_genre_public,book.genre.public,model_book_genre,base.group_public,1,
 access_book_genre_user,book.genre.user,model_book_genre,base.group_user,1,0,0,0
 access_book_genre_manager,book.genre.manager,model_book_genre,sales_team.group_sale_manager,1,1,1,1
 access_recommendation_item_train_wizard_user,recommendation.item.train.wizard.user,model_recommendation_item_train_wizard,base.group_user,1,1,1,1
-access_recommendation_user_train_wizard_user,recommendation.user.train.wizard.user,model_recommendation_user_train_wizard,base.group_user,1,1,1,1
+access_recommendation_order_train_wizard_user,recommendation.order.train.wizard.user,model_recommendation_order_train_wizard,base.group_user,1,1,1,1

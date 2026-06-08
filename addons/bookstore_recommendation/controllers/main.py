@@ -26,7 +26,7 @@ class BookstoreHome(http.Controller):
             books = Product.search(
                 [
                     ("book_genre_id", "in", all_genre_ids),
-                    ("website_published", "=", True),
+                    ("is_published", "=", True),
                 ],
                 limit=6,
             )
@@ -85,8 +85,8 @@ class BookstoreRecommendationController(http.Controller):
         if not order.exists():
             return []
 
-        engine = request.env["recommendation.engine.user"].sudo()
-        products = engine.get_user_recommendations(order_id, limit=3)
+        engine = request.env["recommendation.engine.order"].sudo()
+        products = engine.get_order_recommendations(order_id, limit=3)
         return [
             {
                 "id": p.id,

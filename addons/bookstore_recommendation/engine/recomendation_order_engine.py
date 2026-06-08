@@ -48,6 +48,41 @@ class OrderRecommendationEngine:
 
         return self
 
+    def save_model(self, path: str, top_k: int = 50) -> None:
+        sparse_sim = {
+            int(pid): {
+                int(nid): round(float(score), 5)
+                for nid, score in self.similarity_df[pid].nlargest(top_k).items()
+                if score > 0
+            }
+            for pid in self.similarity_df.columns
+        }
+        popular = {int(k): int(v) for k, v in self.popular_products.items()}
+
+        dir_name = os.path.dirname(path)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
+        with open(path, "w") as f:
+            json.dump({"similarity": sparse_sim, "popular_products": popular}, f)
+
+    @classmethod
+    def load_model(cls, path: str) -> "OrderRecommendationEngine":
+        with open(path) as f:
+            raw = json.load(f)
+
+        sparse_sim = {
+            int(k): {int(nk): v for nk, v in neighbors.items()}
+            for k, neighbors in raw["similarity"].items()
+        }
+
+        engine = cls()
+        engine.similarity_df = pd.DataFrame(sparse_sim).fillna(0.0).astype(np.float32)
+        engine.popular_products = (
+            pd.Series({int(k): v for k, v in raw.get("popular_products", {}).items()})
+            .sort_values(ascending=False)
+        )
+        return engine
+
     def predict(
         self,
         sample: pd.DataFrame,
@@ -58,7 +93,9 @@ class OrderRecommendationEngine:
         in_matrix = [pid for pid in cart_ids if pid in self.similarity_df.columns]
 
         if not in_matrix:
-            return self.popular_products.head(limit)
+            return self.popular_products[
+                ~self.popular_products.index.isin(cart_ids)
+            ].head(limit)
 
         scores = (
             self.similarity_df[in_matrix]
@@ -69,12 +106,13 @@ class OrderRecommendationEngine:
             .dropna()
         )
 
+        exclude = set(scores.index) | cart_ids
         scores = pd.concat(
             [
                 scores,
-                self.popular_products.drop(index=scores.index).head(
-                    limit - len(scores)
-                ),
+                self.popular_products[
+                    ~self.popular_products.index.isin(exclude)
+                ].head(limit - len(scores)),
             ],
         ).head(limit)
 

@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
@@ -42,37 +43,64 @@ class ItemRecommendationEngine:
         self,
         data: pd.DataFrame,
     ):
+        features = self.preprocess(data.drop(columns="id"))
+        product_ids = data["id"].values
 
-        features = self.preprocess(data)
-
-        self.similarity_df = pd.DataFrame(
+        sim = pd.DataFrame(
             cosine_similarity(features.values),
-            index=data.set_index([i for i in data.columns]).index,
-            columns=features.index,
+            index=product_ids,
+            columns=product_ids,
         )
+        self.similarity_df = sim
 
         return self
 
     def predict(
         self,
-        product_tmpl_id,
+        sample: pd.DataFrame,
         limit=6,
     ):
         if self.similarity_df is None:
             return None
 
-        if product_tmpl_id not in self.similarity_df.index:
+        product_id = sample["id"].item()
+
+        if product_id not in self.similarity_df.index:
             return None
 
         scores = (
-            (
-                self.similarity_df[product_tmpl_id]
-                .drop(product_tmpl_id)
-                .nlargest(limit * 3)
-                .to_frame("similarity")
-            )
-            .sort_values("similarity", ascending=False)
-            .head(limit)
+            self.similarity_df[product_id]
+            .drop(product_id)
+            .nlargest(limit)
+            .to_frame("similarity")
         )
 
         return scores
+
+    def save_model(self, path: str) -> None:
+
+        dir_name = os.path.dirname(path)
+
+        if dir_name:
+            os.makedirs(
+                dir_name,
+                exist_ok=True,
+            )
+
+        self.similarity_df.to_json(
+            path,
+            orient="records",
+            indent=4,
+        )
+
+    @classmethod
+    def load_model(
+        cls,
+        path: str,
+    ) -> "ItemRecommendationEngine":
+        df = pd.read_json(path, orient="records")
+        df.columns = df.columns.astype(int)
+        df.index = df.columns  # restore product IDs as row index
+        engine = cls()
+        engine.similarity_df = df
+        return engine

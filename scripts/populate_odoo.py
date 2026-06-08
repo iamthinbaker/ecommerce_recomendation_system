@@ -80,8 +80,19 @@ for b in books:
         GENRE_HIERARCHY[parent][genre].append(sub)
 
 # --- Categorías base ---
-book_categ_id = execute("product.category", "create", [{"name": "Libros"}])
-pub_categ_books_id = execute("product.public.category", "create", [{"name": "Libros"}])
+existing_categ = execute(
+    "product.category", "search", [[["name", "=", "Libros"]]], {"limit": 1}
+)
+book_categ_id = existing_categ[0] if existing_categ else execute(
+    "product.category", "create", [{"name": "Libros"}]
+)
+
+existing_pub_categ = execute(
+    "product.public.category", "search", [[["name", "=", "Libros"]]], {"limit": 1}
+)
+pub_categ_books_id = existing_pub_categ[0] if existing_pub_categ else execute(
+    "product.public.category", "create", [{"name": "Libros"}]
+)
 
 # --- Géneros y categorías públicas con jerarquía ---
 print("Creando jerarquía de géneros...")

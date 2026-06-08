@@ -19,7 +19,7 @@
         id="menu_recomendation_engine_confirmorder"
         name="ConfirmOrder Recomendation Engine"
         parent="menu_recomendation_engine_root"
-        action="recommendation_engine_user_train_wizard_action"
+        action="recommendation_engine_order_train_wizard_action"
         sequence="20"
     />
 </odoo>

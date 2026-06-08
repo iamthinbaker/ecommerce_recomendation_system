@@ -2,10 +2,10 @@ import logging
 import os
 
 import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.preprocessing import MinMaxScaler
 
 from odoo import api, models
+
+from ..engine.recomentation_item_engine import ItemRecommendationEngine
 
 _logger = logging.getLogger(__name__)
 
@@ -13,78 +13,61 @@ _MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "static", "models")
 _ITEM_MODEL_PATH = os.path.join(_MODELS_DIR, "item_similarity.json")
 
 
-class ItemRecommendationEngine(models.AbstractModel):
+class ItemRecommendationEngineModel(models.AbstractModel):
     _name = "recommendation.engine.item"
     _inherit = "recommendation.engine.base"
     _description = "Item-Based Recommendation Engine"
 
     @api.model
-    def _train_item_model(self, months=None, min_product_orders=1):
+    def _train_item_model(
+        self,
+        months=None,
+        min_product_orders=1,
+        use_parent_genre=True,
+        use_genre=True,
+        use_sub_genre=True,
+        use_author=True,
+        use_publisher=True,
+        use_description=False,
+        use_year=False,
+        use_pages=False,
+        use_price=False,
+    ):
         products = self.env["product.template"].sudo().search([("is_book", "=", True)])
 
         if len(products) < 2:
             _logger.warning("Not enough products to train item model.")
             return False
 
-        features = (
-            pd.DataFrame(
-                [
-                    {
-                        "id": p.id,
-                        "genre": str(p.book_genre_id.id or ""),
-                        "sub_genre": str(p.book_sub_genre_id.id or ""),
-                        "author": p.book_author or "",
-                        "publisher": p.book_publisher or "",
-                        "year": float(p.book_year or 0),
-                        "pages": float(p.book_pages or 0),
-                    }
-                    for p in products
-                ]
-            )
-            .set_index("id")
-            .pipe(
-                lambda df: pd.concat(
-                    [
-                        pd.get_dummies(
-                            df[
-                                [
-                                    "genre",
-                                    "sub_genre",
-                                    "author",
-                                    "publisher",
-                                ]
-                            ]
-                        ),
-                        pd.DataFrame(
-                            MinMaxScaler().fit_transform(
-                                df[
-                                    [
-                                        "year",
-                                        "pages",
-                                    ]
-                                ]
-                            ),
-                            columns=["year", "pages"],
-                            index=df.index,
-                        ),
-                    ],
-                    axis=1,
-                )
-            )
+        attribute_map = {
+            "parent_genre": (use_parent_genre, lambda p: p.book_genre_id.parent_id.name or ""),
+            "genre": (use_genre, lambda p: str(p.book_genre_id.id or "")),
+            "sub_genre": (use_sub_genre, lambda p: str(p.book_sub_genre_id.id or "")),
+            "author": (use_author, lambda p: p.book_author or ""),
+            "publisher": (use_publisher, lambda p: p.book_publisher or ""),
+            "description": (use_description, lambda p: p.description_sale or ""),
+            "year": (use_year, lambda p: float(p.book_year or 0)),
+            "pages": (use_pages, lambda p: float(p.book_pages or 0)),
+            "price": (use_price, lambda p: float(p.list_price or 0)),
+        }
+
+        df = pd.DataFrame(
+            [
+                {
+                    "id": p.id,
+                    **{
+                        attr: fn(p)
+                        for attr, (enabled, fn) in attribute_map.items()
+                        if enabled
+                    },
+                }
+                for p in products
+            ]
         )
 
-        similarity_df = pd.DataFrame(
-            cosine_similarity(features.values),
-            index=features.index,
-            columns=features.index,
-        )
-
-        os.makedirs(_MODELS_DIR, exist_ok=True)
-        similarity_df.to_json(
-            _ITEM_MODEL_PATH,
-            orient="records",
-            indent=4,
-        )
+        engine = ItemRecommendationEngine()
+        engine.train(df)
+        engine.save_model(_ITEM_MODEL_PATH)
 
         _logger.info("Item model trained: %d products.", len(products))
         return True
@@ -92,10 +75,7 @@ class ItemRecommendationEngine(models.AbstractModel):
     @api.model
     def _load_item_model(self):
         try:
-            df = pd.read_json(_ITEM_MODEL_PATH, orient="records")
-            df.index = df.index.astype(int)
-            df.columns = df.columns.astype(int)
-            return df
+            return ItemRecommendationEngine.load_model(_ITEM_MODEL_PATH)
         except Exception as exc:
             _logger.error("Failed to load item model: %s", exc)
             return None
@@ -106,35 +86,34 @@ class ItemRecommendationEngine(models.AbstractModel):
         product_tmpl_id,
         limit=6,
     ):
-        similarity_df = self._load_item_model()
-        if similarity_df is None or product_tmpl_id not in similarity_df.index:
+        engine = self._load_item_model()
+
+        if engine is None:
             return self.env["product.template"]
 
-        scores = (
-            (
-                # Get similarity scores for the given product template, excluding itself
-                similarity_df[product_tmpl_id]
-                .drop(product_tmpl_id)
-                .nlargest(limit * 3)
-                .to_frame("similarity")
-                # Add product template records to apply additional filters and boosts
-                # .assign(
-                #     product_card=lambda df: self.env["product.template"].browse(
-                #         df.index.tolist()
-                #     )
-                # )
-                # # Boost similarity for promoted books
-                # .assign(
-                #     similarity=lambda df: df.similarity
-                #     + df.product_card.apply(lambda p: p.book_promoted) * 0.3
-                # )
-            )
-            .sort_values(
-                "similarity",
-                ascending=False,
-            )
-            .head(limit)
+        product = self.env["product.template"].sudo().browse(product_tmpl_id)
+
+        product_df = pd.DataFrame(
+            [
+                {
+                    "id": product.id,
+                    "parent_genre": product.book_genre_id.parent_id.name or "",
+                    "genre": str(product.book_genre_id.id or ""),
+                    "sub_genre": str(product.book_sub_genre_id.id or ""),
+                    "author": product.book_author or "",
+                    "publisher": product.book_publisher or "",
+                    "description": product.description_sale or "",
+                    "year": float(product.book_year or 0),
+                    "pages": float(product.book_pages or 0),
+                    "price": float(product.list_price or 0),
+                }
+            ]
         )
+
+        scores = engine.predict(product_df, limit=limit)
+
+        if scores is None:
+            return self.env["product.template"]
 
         return (
             self.env["product.template"]
